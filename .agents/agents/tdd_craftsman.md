@@ -56,6 +56,52 @@ REFACTOR → limpia con la barra verde: nombres, duplicación, funciones cortas
    mutación superada: cambia el status a `done` y mueve el resumen a
    `progress/history.md`.
 
+## Modo schema (features no-ejecutables)
+
+Cuando la feature es schema + migración + seeder (sin código de app), el
+ciclo TDD se adapta:
+
+### Tipos de "tests" aceptados
+
+1. **Queries SQL** contra BD dockerizada (SELECT, DELETE, etc.)
+2. **Inspección de archivos** (grep, lectura de contenido)
+3. **Exit codes de comandos** (npm run migrate:dev, npm run seed, etc.)
+4. **TypeScript compilation** (tsc --noEmit, npx next build)
+
+### Ciclo adaptado
+
+```
+ROJO     → verificación que falla (query SQL, inspección, exit code)
+VERDE    → mínima modificación del schema/seeder que la hace pasar
+REFACTOR → limpia con la barra verde
+```
+
+### Documentación
+
+En `progress/tdd_<name>.md`, documenta cada ciclo con:
+- `@s` cubierto
+- Tipo de verificación (SQL / inspección / exit code / tsc)
+- Comando o query ejecutado
+- Resultado esperado vs obtenido
+
+Marca con `[schema-mode]` al inicio de la bitácora.
+
+## Modo UI (features de frontend)
+
+Cuando la feature toca componentes React (sin backend), el ciclo TDD se
+adapta:
+
+### Tipos de "tests" aceptados
+
+1. **TypeScript compilation** (tsc --noEmit)
+2. **Build verification** (npx next build)
+3. **Source inspection** (grep por imports, props, JSX)
+4. **React Testing Library** (si está configurado)
+
+### Documentación
+
+Marca con `[ui-mode]` al inicio de la bitácora.
+
 ## Reglas duras
 
 - ❌ Nada de producción sin un test rojo que la pida (Ley 1).

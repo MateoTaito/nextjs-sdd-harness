@@ -46,6 +46,29 @@ favor de una. Deja que el humano decida; registra la decisión y su razón.
 5. **PARA**. No invoques al `gherkin_author`. El `craftsman_lead` decide
    cuándo destilar los escenarios.
 
+## Modo fast (features triviales)
+
+Cuando el `craftsman_lead` active el modo fast, **escribe el spec
+directamente** sin debate:
+
+1. Lee los acceptance criteria de la feature.
+2. Lee el código actual relevante.
+3. Escribe el spec con las decisiones por defecto (sin preguntar).
+4. Documenta las decisiones tomadas sin consulta.
+5. **PARA**.
+
+### Cuándo usar modo fast
+
+- Feature con <= 3 acceptance criteria
+- Cambios triviales (schema, config, bugfix)
+- El `craftsman_lead` lo indica explícitamente
+
+### Cuándo NO usar modo fast
+
+- Feature con decisiones de diseño abiertas
+- Cambios que afectan múltiples capas
+- El `craftsman_lead` no lo indica
+
 ## Reglas duras
 
 - ❌ NUNCA edites `src/`, `tests/` ni `features/`.

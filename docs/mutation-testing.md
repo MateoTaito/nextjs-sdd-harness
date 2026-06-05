@@ -27,10 +27,23 @@ Usamos Stryker Mutator, la herramienta estándar para mutación en
 JavaScript/TypeScript. El script wrapper `tools/mutate.js` ejecuta Stryker
 sobre un archivo específico.
 
+### Runners soportados
+
 ```bash
+# Jest (default)
 node tools/mutate.js src/components/TodoList.tsx
-node tools/mutate.js src/lib/storage.ts
+
+# Node.js native test runner
+node tools/mutate.js src/lib/storage.ts --runner=node
+
+# Solo verificación de tipos (TypeScript)
+node tools/mutate.js src/lib/storage.ts --runner=tsc
 ```
+
+El script detecta automáticamente el directorio del package y busca la
+configuración de tests más cercana.
+
+### Mutaciones estándar
 
 Stryker aplica mutaciones como:
 - Cambiar operadores (`+` → `-`, `===` → `!==`)
@@ -52,12 +65,57 @@ automáticamente).
   justificación explícita escrita en `progress/mutation_<name>.md`. Abusar
   de esta vía es hacer trampa al juez.
 
+## Modo mutación manual
+
+Cuando Stryker no soporta el test runner del repo (ej: `node:test`,
+type assertions `.test-d.ts`), el `mutation_tester` puede hacer
+**mutación manual**:
+
+### Protocolo
+
+1. Para cada archivo tocado, identifica 2-3 mutaciones candidatas:
+   - Cambiar un valor (status code, string, número)
+   - Invertir una condición (`===` → `!==`, `>` → `<=`)
+   - Eliminar un statement (return, assign, call)
+   - Reemplazar un método por otro
+
+2. Para cada mutación:
+   a. **Aplica** la mutación en el archivo.
+   b. **Ejecuta** los tests (`npx tsx --test`, `tsc --noEmit`, etc.).
+   c. Si algún test falla → **KILLED**.
+   d. Si todos pasan → **SURVIVED** (documenta como agujero).
+   e. **Restaura** el archivo original.
+
+3. Documenta en `progress/mutation_<name>.md`.
+
+### Cuándo usar mutación manual
+
+- Tests usan `node:test` (no Jest)
+- Tests son type assertions (`.test-d.ts`)
+- Tests son verificaciones de inspección (grep, lectura de archivos)
+- Stryker no está configurado en el package
+
+## Modo schema
+
+Para features de schema + migración + seeder:
+
+1. Los "tests" son verificaciones (SQL, inspección, exit codes).
+2. La mutación se hace **manualmente** sobre el schema/seeder.
+3. Ejemplos:
+   - Cambiar `onDelete: Cascade` → `onDelete: Restrict`
+   - Cambiar `@unique` → sin `@unique`
+   - Eliminar una relación del schema
+4. Verificar que la verificación correspondiente falla.
+
 ## Configuración
 
 La configuración de Stryker está en `tools/stryker.conf.js`. Incluye:
 - Solo el archivo objetivo (no toda la app)
-- Jest como runner de tests
+- Jest como runner de tests (default)
 - TypeScript checker para compilar
+
+Para otros runners, el script `tools/mutate.js` genera una configuración
+temporal automáticamente.
 
 ## Quién hace qué
 

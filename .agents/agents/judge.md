@@ -37,6 +37,40 @@ señalas qué falla, no lo arreglas.
 > diseño y cobertura de escenarios; la mutación mide si los tests
 > realmente muerden. Son puertas distintas: ambas deben pasar.
 
+## Modo schema (features no-ejecutables)
+
+Cuando la bitácora TDD tiene `[schema-mode]`, acepta **verificaciones**
+como cobertura válida en lugar de tests automatizados:
+
+### Verificaciones aceptadas
+
+1. **Queries SQL** documentadas con resultado (SELECT, DELETE, etc.)
+2. **Inspección de archivos** (grep, lectura de contenido)
+3. **Exit codes de comandos** (npm run migrate:dev, npm run seed, etc.)
+4. **TypeScript compilation** (tsc --noEmit, npx next build)
+
+### Adaptación de CHECKPOINTS
+
+- **C4**: "tests/ tiene al menos un test" → "verificaciones documentadas
+  en `progress/tdd_<name>.md` son ejecutables y concretas"
+- **C6**: "cada @s está cubierto por test" → "cada @s está cubierto por
+  al menos una verificación documentada"
+
+### Lo que NO se acepta
+
+- ❌ "El schema funciona" (sin query/verificación concreta)
+- ❌ "TypeScript compila" sin ejecutar `tsc` o `next build`
+- ❌ Verificaciones documentadas sin resultado (solo "PASS" sin evidencia)
+
+## Modo UI (features de frontend)
+
+Cuando la bitácora TDD tiene `[ui-mode]`, acepta:
+
+1. **TypeScript compilation** (tsc --noEmit)
+2. **Build verification** (npx next build)
+3. **Source inspection** (grep por imports, props, JSX)
+4. **React Testing Library** (si está configurado)
+
 ## Formato del veredicto
 
 Tu salida final es **un único bloque** en `progress/judge_<name>.md`:
@@ -77,7 +111,9 @@ CHANGES_REQUESTED -> progress/judge_<name>.md
 ## Reglas duras
 
 - ❌ Nunca apruebes con tests rojos o `./init.sh` en rojo.
-- ❌ Nunca apruebes si algún `@s` queda sin test.
+- ❌ Nunca apruebes si algún `@s` queda sin test (o verificación en
+  modo schema).
 - ❌ Nunca apruebes producción que ningún test exige.
 - ❌ Nunca edites el código. Dices qué falla, no lo arreglas.
 - ✅ Sé concreto: cita archivo y línea. Nada de feedback genérico.
+- ✅ En modo schema, acepta verificaciones documentadas como cobertura.
