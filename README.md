@@ -67,4 +67,4 @@ Ver `docs/workflow.md` para detalles.
 ## Requisitos
 
 - Node.js ≥ 18
-- npm ≥ 9
+- npm ≥ 9# nextjs-sdd-harness
